@@ -1,0 +1,107 @@
+`timescale 1ns/1ps
+
+// ============================================================
+// Testbench for 4-Stage Pipelined Processor
+// ============================================================
+
+module pipeline_testbench;
+
+    // Testbench signals
+    reg clk;
+    reg reset;
+    reg [7:0] instr_mem_data;
+    reg [3:0] instr_mem_addr;
+    wire ie;
+    reg [7:0] data_mem_data;
+    reg [7:0] data_mem_addr;
+    reg [1:0] data_mem_we;
+    reg [7:0] reg_write_data;
+    reg [3:0] reg_write_addr;
+    reg reg_we;
+    
+    // Memory storage
+    reg [7:0] instr_memory [0:15];
+    reg [7:0] data_memory [0:255];
+    
+    // ========== CLOCK GENERATION ==========
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+    
+    // ========== INSTRUCTION MEMORY INITIALIZATION ==========
+    initial begin
+        instr_memory[0] = 8'b000_00001_000;   // ADD R1, R0, R0
+        instr_memory[1] = 8'b011_00001_101;   // LOAD R1, #5
+        instr_memory[2] = 8'b011_00010_011;   // LOAD R2, #3
+        instr_memory[3] = 8'b000_00011_010;   // ADD R3, R1, R2
+        instr_memory[4] = 8'b001_00100_010;   // SUB R4, R1, R2
+        instr_memory[5] = 8'b010_00101_010;   // AND R5, R1, R2
+        instr_memory[6] = 8'b011_00110_1111;  // LOAD R6, #15
+        instr_memory[7] = 8'b111_00000_000;   // NOP
+        instr_memory[8] = 8'b111_00000_000;
+        instr_memory[9] = 8'b111_00000_000;
+        instr_memory[10] = 8'b111_00000_000;
+        instr_memory[11] = 8'b111_00000_000;
+        instr_memory[12] = 8'b111_00000_000;
+        instr_memory[13] = 8'b111_00000_000;
+        instr_memory[14] = 8'b111_00000_000;
+        instr_memory[15] = 8'b111_00000_000;
+    end
+    
+    // ========== INSTRUCTION MEMORY READ ==========
+    always @(posedge clk) begin
+        instr_mem_data <= instr_memory[instr_mem_addr];
+    end
+    
+    // ========== DATA MEMORY READ/WRITE ==========
+    always @(posedge clk) begin
+        if (data_mem_we == 2'b01)
+            data_memory[data_mem_addr] <= reg_write_data;
+        
+        data_mem_data <= data_memory[data_mem_addr];
+    end
+    
+    // ========== VCD DUMP ==========
+    initial begin
+        $dumpfile("pipeline_simulation.vcd");
+        $dumpvars(0, pipeline_testbench);
+    end
+    
+    // ========== TEST SEQUENCE ==========
+    initial begin
+        reset = 1;
+        
+        $display("========================================================");
+        $display("  4-STAGE PIPELINED PROCESSOR TESTBENCH");
+        $display("========================================================");
+        $display("Instructions: ADD R3=R1+R2, SUB R4=R1-R2, AND R5=R1&R2");
+        $display("Expected: R1=5, R2=3, R3=8, R4=2, R5=1, R6=15");
+        $display("========================================================");
+        $display("");
+        
+        #30;
+        reset = 0;
+        
+        // Run for 25 cycles
+        repeat (25) begin
+            @(posedge clk);
+        end
+        
+        $display("");
+        $display("========================================================");
+        $display("  SIMULATION COMPLETE");
+        $display("  Expected Results:");
+        $display("    R1 = 5  (LOAD)");
+        $display("    R2 = 3  (LOAD)");
+        $display("    R3 = 8  (ADD: 5+3)");
+        $display("    R4 = 2  (SUB: 5-3)");
+        $display("    R5 = 1  (AND: 5&3)");
+        $display("    R6 = 15 (LOAD)");
+        $display("========================================================");
+        
+        #20;
+        $finish;
+    end
+    
+endmodule
