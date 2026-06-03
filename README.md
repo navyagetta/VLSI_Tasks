@@ -19,6 +19,18 @@ The pipelined processor shows a simple five-stage pipeline: fetch, decode, execu
 The FIR filter implements a digital signal processing block using multiply-accumulate (MAC) operations. You can change the number of taps and the bit precision with parameters. Tasks are used to load coefficients, run the MAC loop, scale results for fixed-point numbers, and handle saturation (preventing overflow). Tasks make it simple to test different filter lengths and precision choices without rewriting the core logic.
 All modules include testbenches written in Verilog. Testbenches use tasks to generate input patterns, run sequences of operations, and check outputs automatically. This makes testing repeatable, helps find bugs fast, and speeds up verification. I used Vivado for simulation, linting, synthesis, and implementation. After verifying functionality in simulation, I ran synthesis and place-and-route in Vivado to check timing and resource usage for the chosen Xilinx FPGA target.In short, these projects are practical examples of how to build clear, modular FPGA designs using Verilog and Vivado. The use of tasks reduces duplicated code and improves maintainability. The ALU, RAM, pipelined CPU, and FIR filter together demonstrate common VLSI building blocks and show how to organize a real design flow: write RTL, test with task-driven testbenches, synthesize, and implement on Xilinx FPGAs.##
 
-#OUTPUT
+#OUTPUT 1
 
 <img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/463fcce0-da9b-49ae-8581-c379da7ce373" />
+
+#OUTPUT 2
+
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/edba9c84-1aa1-4e8f-a4ad-d99f7602f693" />
+
+#OUTPUT 3
+
+
+
+#OUTPUT 4
+
+
