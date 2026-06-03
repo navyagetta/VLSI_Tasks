@@ -1,0 +1,145 @@
+`timescale 1ns/1ps
+
+module ram_testbench;
+
+    // Testbench signals
+    reg clk;
+    reg we;
+    reg [3:0] addr;
+    reg [7:0] wdata;
+    wire [7:0] rdata;
+    
+    // Instantiate the RAM module
+    synchronous_ram uut (
+        .clk(clk),
+        .we(we),
+        .addr(addr),
+        .wdata(wdata),
+        .rdata(rdata)
+    );
+    
+    // Clock generation (10ns period = 100MHz)
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+    
+    // Test sequence
+    initial begin
+        // Initialize signals
+        we = 0;
+        addr = 0;
+        wdata = 0;
+        
+        $display("========================================");
+        $display("Synchronous RAM Testbench");
+        $display("========================================");
+        $display("Time | Addr | WE | WData | RData | Operation");
+        $display("========================================");
+        
+        // Wait for a few clock cycles
+        #20;
+        
+        // WRITE OPERATION 1: Write 0x5A to address 0
+        we = 1;
+        addr = 4'd0;
+        wdata = 8'h5A;
+        #10;
+        $display("%4t | %4d | %2d | %5h | %5h | Write 0x5A to addr 0", 
+                 $time, addr, we, wdata, rdata);
+        
+        // WRITE OPERATION 2: Write 0xA5 to address 1
+        we = 1;
+        addr = 4'd1;
+        wdata = 8'hA5;
+        #10;
+        $display("%4t | %4d | %2d | %5h | %5h | Write 0xA5 to addr 1", 
+                 $time, addr, we, wdata, rdata);
+        
+        // WRITE OPERATION 3: Write 0xFF to address 5
+        we = 1;
+        addr = 4'd5;
+        wdata = 8'hFF;
+        #10;
+        $display("%4t | %4d | %2d | %5h | %5h | Write 0xFF to addr 5", 
+                 $time, addr, we, wdata, rdata);
+        
+        // WRITE OPERATION 4: Write 0x00 to address 10
+        we = 1;
+        addr = 4'd10;
+        wdata = 8'h00;
+        #10;
+        $display("%4t | %4d | %2d | %5h | %5h | Write 0x00 to addr 10", 
+                 $time, addr, we, wdata, rdata);
+        
+        // WRITE OPERATION 5: Write 0x12 to address 15
+        we = 1;
+        addr = 4'd15;
+        wdata = 8'h12;
+        #10;
+        $display("%4t | %4d | %2d | %5h | %5h | Write 0x12 to addr 15", 
+                 $time, addr, we, wdata, rdata);
+        
+        // Switch to READ mode
+        we = 0;
+        
+        // READ OPERATION 1: Read from address 0
+        addr = 4'd0;
+        #10;
+        $display("%4t | %4d | %2d | %5h | %5h | Read from addr 0", 
+                 $time, addr, we, wdata, rdata);
+        
+        // READ OPERATION 2: Read from address 1
+        addr = 4'd1;
+        #10;
+        $display("%4t | %4d | %2d | %5h | %5h | Read from addr 1", 
+                 $time, addr, we, wdata, rdata);
+        
+        // READ OPERATION 3: Read from address 5
+        addr = 4'd5;
+        #10;
+        $display("%4t | %4d | %2d | %5h | %5h | Read from addr 5", 
+                 $time, addr, we, wdata, rdata);
+        
+        // READ OPERATION 4: Read from address 10
+        addr = 4'd10;
+        #10;
+        $display("%4t | %4d | %2d | %5h | %5h | Read from addr 10", 
+                 $time, addr, we, wdata, rdata);
+        
+        // READ OPERATION 5: Read from address 15
+        addr = 4'd15;
+        #10;
+        $display("%4t | %4d | %2d | %5h | %5h | Read from addr 15", 
+                 $time, addr, we, wdata, rdata);
+        
+        // READ UNINITIALIZED: Read from address 3 (never written)
+        addr = 4'd3;
+        #10;
+        $display("%4t | %4d | %2d | %5h | %5h | Read from addr 3 (uninitialized)", 
+                 $time, addr, we, wdata, rdata);
+        
+        // OVERWRITE: Write new value to address 0
+        we = 1;
+        addr = 4'd0;
+        wdata = 8'hAB;
+        #10;
+        $display("%4t | %4d | %2d | %5h | %5h | Overwrite addr 0 with 0xAB", 
+                 $time, addr, we, wdata, rdata);
+        
+        // READ VERIFICATION: Read address 0 again to verify overwrite
+        we = 0;
+        addr = 4'd0;
+        #10;
+        $display("%4t | %4d | %2d | %5h | %5h | Verify overwrite at addr 0", 
+                 $time, addr, we, wdata, rdata);
+        
+        $display("========================================");
+        $display("Testbench Complete!");
+        $display("========================================");
+        
+        #20;
+        $finish;
+    end
+    
+endmodule
