@@ -33,4 +33,4 @@ All modules include testbenches written in Verilog. Testbenches use tasks to gen
 
 #OUTPUT 4
 
-
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/b6142fcf-82fb-49b5-9765-8d9efbc402ba" />
